@@ -1,128 +1,133 @@
+
 "use client";
 
-import { useState } from "react";
-import { Eye, EyeOff, Lock, Mail, Bot } from "lucide-react";
-import Link from "next/link";
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleLogin(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    console.log("LOGIN MULAI");
+
+    setLoading(true);
+    setError("");
+
+    try {
+      console.log("SEBELUM SUPABASE");
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      console.log("SESUDAH SUPABASE");
+      console.log("DATA:", data);
+      console.log("ERROR:", error);
+
+      if (error) {
+        console.error("SUPABASE ERROR:", error);
+        setError(error.message);
+        return;
+      }
+
+      if (!data.user) {
+        setError("User tidak ditemukan.");
+        return;
+      }
+
+      console.log("LOGIN BERHASIL");
+      console.log("USER:", data.user);
+
+      router.push("/dashboard");
+    } catch (err) {
+      console.error("LOGIN ERROR:", err);
+      setError("Terjadi kesalahan saat login.");
+    } finally {
+      console.log("LOGIN SELESAI");
+      setLoading(false);
+    }
+  }
 
   return (
-    <main className="min-h-screen flex">
-      {/* LEFT */}
-      <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-blue-900 via-blue-700 to-cyan-500 items-center justify-center relative overflow-hidden">
-        <div className="absolute w-[500px] h-[500px] rounded-full bg-blue-400/20 blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-[350px] h-[350px] rounded-full bg-cyan-300/20 blur-3xl"></div>
-
-        <div className="relative text-center text-white px-10">
-          <div className="mx-auto w-28 h-28 rounded-full bg-white/10 backdrop-blur-lg flex items-center justify-center border border-white/20">
-            <Bot size={60} />
-          </div>
-
-          <h1 className="mt-8 text-5xl font-bold">
-            SENTRAL
-            <span className="text-cyan-300"> ROBOTIC.ID</span>
+    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold text-slate-900">
+            Sentral Robotic
           </h1>
 
-          <p className="mt-6 text-lg text-blue-100 leading-8">
-            Dashboard Administrator
-            <br />
-            Kelola Produk, Pesan, dan Website
-            <br />
-            secara mudah dan cepat.
+          <p className="mt-2 text-sm text-slate-500">
+            Admin Dashboard
           </p>
         </div>
-      </div>
 
-      {/* RIGHT */}
-      <div className="flex-1 bg-gray-50 flex justify-center items-center px-6">
+        <form onSubmit={handleLogin} className="space-y-5">
+          <div>
+            <label
+              htmlFor="email"
+              className="mb-2 block text-sm font-medium text-slate-700"
+            >
+              Email
+            </label>
 
-        <div className="w-full max-w-md">
-
-          <div className="bg-white rounded-3xl shadow-2xl p-10">
-
-            <h2 className="text-3xl font-bold text-gray-800">
-              Login Admin
-            </h2>
-
-            <p className="text-gray-500 mt-2">
-              Selamat datang kembali 👋
-            </p>
-
-            <form className="mt-8 space-y-6">
-
-              <div>
-                <label className="text-sm text-gray-600">
-                  Email
-                </label>
-
-                <div className="mt-2 flex items-center border rounded-xl px-4 h-14">
-                  <Mail className="text-gray-400 mr-3" size={20} />
-
-                  <input
-                    type="email"
-                    placeholder="admin@sentralrobotic.id"
-                    className="flex-1 outline-none bg-transparent"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm text-gray-600">
-                  Password
-                </label>
-
-                <div className="mt-2 flex items-center border rounded-xl px-4 h-14">
-
-                  <Lock className="text-gray-400 mr-3" size={20} />
-
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="********"
-                    className="flex-1 outline-none bg-transparent"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff
-                        className="text-gray-400"
-                        size={20}
-                      />
-                    ) : (
-                      <Eye
-                        className="text-gray-400"
-                        size={20}
-                      />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full h-14 rounded-xl bg-blue-600 hover:bg-blue-700 transition text-white font-semibold"
-              >
-                Login
-              </button>
-
-            </form>
-
-            <div className="mt-8 border-t pt-6 text-center">
-
-              <p className="text-sm text-gray-500">
-                © 2026 Sentral Robotic.ID
-              </p>
-
-            </div>
-
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="admin@sentralrbtk.id"
+              required
+              disabled={loading}
+              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 text-black"
+            />
           </div>
 
-        </div>
+          <div>
+            <label
+              htmlFor="password"
+              className="mb-2 block text-sm font-medium text-slate-700"
+            >
+              Password
+            </label>
 
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Masukkan password"
+              required
+              disabled={loading}
+              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 text-black"
+            />
+          </div>
+
+          {error && (
+            <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {loading ? "Memproses..." : "Login"}
+          </button>
+        </form>
       </div>
     </main>
   );
 }
+

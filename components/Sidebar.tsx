@@ -27,11 +27,7 @@ const menus = [
     href: "/dashboard/contact",
     icon: Mail,
   },
-  {
-    title: "Pengaturan",
-    href: "/dashboard/settings",
-    icon: Settings,
-  },
+  
 ];
 
 export default function Sidebar() {

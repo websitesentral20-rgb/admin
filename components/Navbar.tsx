@@ -13,23 +13,14 @@ export default function Navbar() {
         </h1>
 
         <p className="text-sm text-slate-500">
-          Welcome Back Boyyyy👋
+          Welcome👋
         </p>
 
       </div>
 
       <div className="flex items-center gap-6">
 
-        <button className="relative">
-
-          <Bell
-            size={24}
-            className="text-slate-600"
-          />
-
-          <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-red-500"></span>
-
-        </button>
+        
 
         <div className="flex items-center gap-3">
 

@@ -35,7 +35,7 @@ export default function ContactPage() {
         <input
           type="text"
           placeholder="Cari pesan..."
-          className="w-full rounded-xl border border-slate-300 bg-white py-3 pl-12 pr-5 outline-none focus:border-blue-600"
+          className="w-full rounded-xl border text-black border-slate-300 bg-white py-3 pl-12 pr-5 outline-none focus:border-blue-600"
         />
 
       </div>
